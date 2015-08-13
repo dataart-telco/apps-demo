@@ -1,0 +1,23 @@
+[Auth]
+user = ACae6e420f425248d6a26948c17a9e2acf
+pass = 42d8aa7cde9c78c4757862d84620c335
+[Service]
+redis = localhost:6379
+restcomm = 192.168.176.220:8080
+[Redis]
+channel = conf
+[ServerPort]
+main = 7090
+conference = 7091
+advertising = 7092
+portal = 7093
+[Callback]
+phone = +5555
+conference = 9999
+[Messages]
+dialFrom=DataArt Conference
+conferenceWelcome=Welcome to the conference
+Question=Are you able to launch services at Google speed? Are you interested in doing this please talk to Dataart. Do you want to contact Dataart?
+Answer1=if yes, press 1
+ThanksForAttention=Thank you for attention
+ThanksForAnswer=Thanks for your choice

@@ -1,0 +1,7 @@
+.idea
+*.iml
+/docker/demo-main/demo-main-server
+/docker/demo-conference/demo-conference-server
+/docker/demo-advertising/demo-call-play-server
+/docker/demo-advertising/demo-call-play
+/tmp
