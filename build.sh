@@ -2,6 +2,7 @@ cp ./common/demo.gcfg ./docker/demo-advertising/
 cp ./common/demo.gcfg ./docker/demo-conference/
 cp ./common/demo.gcfg ./docker/demo-main/
 
+go get ./...
 go install ./common
 go build -o ./docker/demo-advertising/demo-call-play ./advertising/demo-call-play.go ./advertising/advertisingtcall.go ./advertising/conference.go ./advertising/webserver.go
 go build -o ./docker/demo-advertising/demo-call-play-server ./advertising/demo-call-play-server.go ./advertising/advertisingtcall.go ./advertising/conference.go ./advertising/portal-webserver.go

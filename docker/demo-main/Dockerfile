@@ -8,4 +8,4 @@ COPY demo.gcfg /demo/
 EXPOSE 7090
 
 WORKDIR /demo
-CMD ./demo-main-server -host=$HOST -redis=$REDIS
+CMD ./demo-main-server -host=$HOST -redis=$REDIS -restcomm=${RESTCOMM}
