@@ -38,7 +38,8 @@ func NewIncomingPhoneNumber(sid string, phoneNumber string)(IncomingPhoneNumber)
 
 func (n IncomingPhoneNumber)Find(api RestcommApi)(*IncomingPhoneNumber){
 	acc := api.User + ":" + api.Pass
-	path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/IncomingPhoneNumbers/Local.json", acc, api.Server, api.User)
+	path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/IncomingPhoneNumbers.json", acc, api.Server, api.User)
+
 	resp, err := http.Get(path)
 
 	if(err != nil){
@@ -46,7 +47,7 @@ func (n IncomingPhoneNumber)Find(api RestcommApi)(*IncomingPhoneNumber){
 	}
 
 	if(resp.StatusCode != 200){
-		panic(errors.New("Can't execute request "))
+		panic(errors.New(fmt.Sprintf("Can't execute request %d", resp.StatusCode)))
 	}
 
 	defer resp.Body.Close()
