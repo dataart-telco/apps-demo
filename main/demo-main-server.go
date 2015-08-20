@@ -1,5 +1,8 @@
 package main
 
+// This module registers phone number in RestComm 
+// and collects all incomming phone numbers to the databse.
+
 func main() {
 
 	storage := Storage{}

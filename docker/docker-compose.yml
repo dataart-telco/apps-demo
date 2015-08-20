@@ -9,8 +9,10 @@ main:
     links:
      - redis
     environment:
-      HOST: 192.168.176.220
-      REDIS: 192.168.176.220:6379
+      EXTERNAL_IP: 192.168.176.220
+      REDIS_SERVICE_HOST: 192.168.176.220
+      REDIS_SERVICE_PORT: 6379
+      RESTCOMM_SERVICE: 192.168.176.220:7070
 conference:
     build: ./demo-conference
     ports:
@@ -18,8 +20,10 @@ conference:
     links:
      - redis
     environment:
-      HOST: 192.168.176.220
-      REDIS: 192.168.176.220:6379
+      EXTERNAL_IP: 192.168.176.220
+      REDIS_SERVICE_HOST: 192.168.176.220
+      REDIS_SERVICE_PORT: 6379
+      RESTCOMM_SERVICE: 192.168.176.220:7070
 advertising:
     build: ./demo-advertising
     ports:
@@ -28,5 +32,21 @@ advertising:
     links:
      - redis
     environment:
-      HOST: 192.168.176.220
-      REDIS: 192.168.176.220:6379
+      EXTERNAL_IP: 192.168.176.220
+      REDIS_SERVICE_HOST: 192.168.176.220
+      REDIS_SERVICE_PORT: 6379
+      RESTCOMM_SERVICE: 192.168.176.220:7070
+mailagent:
+    build: ./mailagent
+    ports:
+     - "7094:7094"
+    links:
+     - redis
+    environment:
+      EXTERNAL_IP: 192.168.176.220
+      REDIS_SERVICE_HOST: 192.168.176.220
+      REDIS_SERVICE_PORT: 6379
+      RESTCOMM_SERVICE: 192.168.176.220:7070
+      GMAIL_USER: tads2015dataart@gmail.com
+      GMAIL_PASS: gdubina2015
+ 

@@ -1,9 +1,10 @@
 package main
 import (
+	"time"
+    "encoding/json"
 	"net/http"
 	"fmt"
 	"strings"
-	"strconv"
 )
 
 const PATH_GATHER  = "/gather.html"
@@ -21,6 +22,8 @@ func NewWebServer()(WebServer){
 
 func (web WebServer)httpHandlerPlay(w http.ResponseWriter, r *http.Request){
 	fmt.Println("\t<- http request -", r.URL)
+    
+    w.Header().Set("Content-Type", "text/xml")
 
 	if strings.HasPrefix(r.URL.Path, PATH_GATHER){
 		web.handleAnswer(w, r)
@@ -31,16 +34,16 @@ func (web WebServer)httpHandlerPlay(w http.ResponseWriter, r *http.Request){
 
 func (web WebServer)handleAnswer(w http.ResponseWriter, r *http.Request){
 	phone := r.FormValue("To")
-	digits, err := strconv.Atoi(r.FormValue("Digits"))
+	digits := r.FormValue("Digits")
 
-	if err != nil {
+	if digits == "" {
 		fmt.Fprintf(w, "<Response><Say>%s</Say><Hangup/></Response>", cfg.Messages.ThanksForAttention)
 		return
 	}
 
-	scenario, ok := pendingCalls[phone]
+	scenario := getPendingCall(phone)
 
-	if !ok {
+	if scenario == nil {
 		fmt.Fprintf(w, "<Response><Say>%s</Say><Hangup/></Response>", cfg.Messages.ThanksForAttention)
 		return
 	}
@@ -52,32 +55,32 @@ func (web WebServer)handleAnswer(w http.ResponseWriter, r *http.Request){
 	}
 	db.RPush(KEY_GATHER, phone)
 
-	fmt.Fprintf(w, "<Response><Say>%s</Say><Hangup/></Response>",  variant.confirmation)
+	fmt.Fprintf(w, "<Response><Say>%s</Say><Hangup/></Response>",  variant.ConfMessage)
 }
 
 func (web WebServer)handleAskQuestion(w http.ResponseWriter, r *http.Request){
 
 	phone := r.FormValue("To")
-	scenario, ok := pendingCalls[phone]
+	scenario := getPendingCall(phone)
 
-	if !ok{
+	if scenario == nil {
 		fmt.Fprintf(w, "<Response><Say>%s</Say></Response>", cfg.Messages.ThanksForAttention)
 		return
 	}
 
 	resp := fmt.Sprintf("<Say>%s</Say>", scenario.Question)
 	for k, v := range scenario.Variants{
-		if k == -1 {
+		if k == UNDEFINED_VARIANT {
 			continue
 		}
-		resp += fmt.Sprintf("<Say>%s</Say>", v.text)
+		resp += fmt.Sprintf("<Say>%s</Say>", v.Message)
 	}
 
 	another := ""
 
-	variant, ok := scenario.Variants[-1]
+	variant, ok := scenario.Variants[UNDEFINED_VARIANT]
 	if ok {
-		another = fmt.Sprintf("<Say>%s</Say>", variant.text)
+		another = fmt.Sprintf("<Say>%s</Say>", variant.Message)
 	}
 
 	fmt.Fprintf(w,
@@ -97,4 +100,30 @@ func (web WebServer) Start() {
 			panic(err)
 		}
 	}()
+
+    url := fmt.Sprintf("http://%s/play-sound.xml", cfg.GetExternalAddress(cfg.ServerPort.Advertising))
+    for i := 0; i < 15; i++ {
+        fmt.Println("Wait until server is ready...")        
+        time.Sleep(1 * time.Second)
+
+        resp, err := http.Get(url)
+	    if(err == nil && resp.StatusCode == 200){
+		    return
+	    }
+    }
+}
+
+func getPendingCall(client string)(*AdvertisingCall){
+    jStr := db.Get(PENDING_PREFIX + client).Val()
+
+    if jStr == "" {
+        return nil
+    }
+
+    result := AdvertisingCall{}
+    err := json.Unmarshal([]byte(jStr), &result)
+    if err != nil {
+        return nil
+    }
+    return &result
 }

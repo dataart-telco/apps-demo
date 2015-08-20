@@ -1,8 +1,10 @@
 package main
 import (
-	"time"
 	"tad-demo/common"
 )
+
+// This module gets participants of current conference, drops it and makes advertising call to them
+// We need to have webserver to handle callback urls from RestComm and provide commands for it.
 
 func main() {
 
@@ -15,13 +17,12 @@ func main() {
 
 	conference.Drop()
 
-	time.Sleep(5 * time.Second)
 	for _, participant := range participants{
 
 		call := NewAdvertisingCall(participant)
 		call.Prompt(cfg.Messages.Question)
 
-		call.Variant(1).Text(cfg.Messages.Answer1).Confirmation(cfg.Messages.ThanksForAnswer)
+		call.Variant("1").Text(cfg.Messages.Answer1).Confirmation(cfg.Messages.ThanksForAnswer)
 		call.Other().Text(cfg.Messages.ThanksForAttention)
 		call.Exec()
 	}

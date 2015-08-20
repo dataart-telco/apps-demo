@@ -1,6 +1,8 @@
 package main
 import (
 	"fmt"
+    "time"
+    "encoding/json"
 	common "tad-demo/common"
 )
 
@@ -8,42 +10,43 @@ var restcommApi = common.NewRestcommApi(cfg.Service.Restcomm, cfg.Auth.User, cfg
 var cfg = common.NewConfig()
 var db = common.NewDbClient(cfg.Service.Redis)
 
-var pendingCalls = make(map[string]*AdvertisingCall)
+const PENDING_PREFIX = "pending:"
+const UNDEFINED_VARIANT = "-1"
 
 type Variant struct{
-	text string
-	confirmation string
+	Message string
+	ConfMessage string
 }
 
 func (v *Variant)Text(text string)(*Variant){
-	v.text = text
+	v.Message = text
 	return v
 }
 
 func (v *Variant)Confirmation(text string)(*Variant){
-	v.confirmation = text
+	v.ConfMessage = text
 	return v
 }
 
 type AdvertisingCall struct{
 	Sid string
-	Variants map[int]*Variant
+	Variants map[string]*Variant
 
 	Question string
 }
 
 func NewAdvertisingCall(participant string)(*AdvertisingCall){
-	return &AdvertisingCall{Sid: participant, Variants: make(map[int]*Variant)}
+	return &AdvertisingCall{Sid: participant, Variants: make(map[string]*Variant)}
 }
 
-func (call *AdvertisingCall)Variant(val int)(*Variant){
+func (call *AdvertisingCall)Variant(val string)(*Variant){
 	call.Variants[val] = &Variant{}
 	return call.Variants[val]
 }
 
 func (call *AdvertisingCall)Other()(*Variant){
-	call.Variants[-1] = &Variant{}
-	return call.Variants[-1];
+	call.Variants[UNDEFINED_VARIANT] = &Variant{}
+	return call.Variants[UNDEFINED_VARIANT];
 }
 
 func (call *AdvertisingCall)Prompt(question string){
@@ -59,6 +62,14 @@ func (call AdvertisingCall)Exec(){
 		return
 	}
 
-	pendingCalls[common.GetClientName(to)] = &call
+    bytes, err :=json.Marshal(&call)
+    if err != nil {
+        fmt.Println("\tcan't convert to json", call.Sid)
+        fmt.Println("\tERROR:", err)
+        return
+    }
+
+    db.Set(PENDING_PREFIX + common.GetClientName(to), string(bytes), 1 * time.Hour)
+
 	restcommApi.MakeCall(cfg.Messages.DialFrom, to, url)
 }

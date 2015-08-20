@@ -44,6 +44,7 @@ func (sms Sms)Subscribe()(Subscription){
 }
 
 func (sms Sms)handler(w http.ResponseWriter, r *http.Request){
+    w.Header().Set("Content-Type", "text/xml")
 	fmt.Fprintf(w, "<Response><Hangup/></Response>")
 
 	from := r.PostFormValue("From")

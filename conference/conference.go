@@ -17,11 +17,11 @@ func (conf Conference)RegisterNumber(phone string){
 }
 
 func (conf Conference)Add(client string){
-
 	to := common.ConvertToRestcommNumber(client)
 
 	call, err := restcommApi.MakeCall(cfg.Messages.DialFrom, to, fmt.Sprintf("http://%s/make-conference.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)))
-	if(err != nil){
+
+    if(err != nil){
 		fmt.Println("ERROR: Call to", to, " with erorr", err)
 		return
 	}

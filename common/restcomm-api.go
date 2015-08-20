@@ -139,6 +139,7 @@ func (api RestcommApi) UpdateCallByUri(callUri string, params url.Values)(bool){
 }
 
 func (api RestcommApi)MakeCall(from string, to string, callback string)(*CallInfo, error){
+    fmt.Println("\tapi.MakeCall: from =", from, " to =", to, " callback =", callback)
 	acc := api.User + ":" + api.Pass
     path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/Calls.json", acc, api.Server, api.User)
 	resp,err := http.PostForm(path,
