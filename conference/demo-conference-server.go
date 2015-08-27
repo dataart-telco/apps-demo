@@ -12,7 +12,7 @@ func main() {
 	webServer.Start()
 
 	conference := Conference{}
-    conference.RegisterNumber(cfg.Callback.Conference)
+	conference.RegisterNumber(cfg.Callback.Conference)
 
 	storage := Storage{}
 	subscription := storage.Subscribe()

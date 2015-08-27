@@ -7,7 +7,7 @@ func main() {
 
 	storage := Storage{}
 	sms := Sms{}
-    sms.RegisterNumber(cfg.Callback.Phone)
+	sms.RegisterNumber(cfg.Callback.Phone)
 
 	subscription := sms.Subscribe()
 
