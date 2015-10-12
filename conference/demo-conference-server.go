@@ -1,4 +1,5 @@
 package main
+
 import "tad-demo/common"
 
 var cfg = common.NewConfig()
@@ -8,7 +9,7 @@ var cfg = common.NewConfig()
 
 func main() {
 
-	webServer := WebServer{}
+	webServer := WebServer{StatusHandler: SmsCallLink{}}
 	webServer.Start()
 
 	conference := Conference{}
@@ -17,8 +18,9 @@ func main() {
 	storage := Storage{}
 	subscription := storage.Subscribe()
 
-	for{
+	for {
 		pstn := subscription.Receive()
 		conference.Add(pstn)
+
 	}
 }

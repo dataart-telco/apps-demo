@@ -7,21 +7,25 @@ import (
 
 var restcommApi = common.NewRestcommApi(cfg.Service.Restcomm, cfg.Auth.User, cfg.Auth.Pass)
 
-type Conference struct{
+type Conference struct {
 }
 
-func (conf Conference)RegisterNumber(phone string){
-    fmt.Println("\tRegister number:", phone)
+func (conf Conference) RegisterNumber(phone string) {
+	common.Info.Println("\tRegister number:", phone)
 
 	common.NewIncomingPhoneNumber("", cfg.Callback.Conference).CreateOrUpdate(restcommApi, "")
 }
 
-func (conf Conference)Add(client string){
+func (conf Conference) Add(client string) {
 	to := common.ConvertToRestcommNumber(client)
 
-	call, err := restcommApi.MakeCall(cfg.Messages.DialFrom, to, fmt.Sprintf("http://%s/make-conference.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)))
+	call, err := restcommApi.MakeCallWithStatus(
+		cfg.Messages.DialFrom,
+		to,
+		fmt.Sprintf("http://%s/make-conference.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)),
+		fmt.Sprintf("http://%s/call-status.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)))
 
-    if(err != nil){
+	if err != nil {
 		fmt.Println("ERROR: Call to", to, " with erorr", err)
 		return
 	}
