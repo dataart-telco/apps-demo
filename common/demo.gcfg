@@ -5,15 +5,19 @@ pass = 42d8aa7cde9c78c4757862d84620c335
 redis = localhost:6379
 restcomm = 192.168.176.220:8080
 [Redis]
-channel = conf
+mainChannel = main
+confChannel = conf
+inProgressKey = progress
 [ServerPort]
 main = 7090
 conference = 7091
 advertising = 7092
 portal = 7093
+sms = 7094
 [Callback]
 phone = +5555
 conference = 9999
+sms = 9999
 [Messages]
 dialFrom=DataArt Conference
 conferenceWelcome=Welcome to the conference
@@ -21,3 +25,4 @@ Question=Are you able to launch services at Google speed? Are you interested in 
 Answer1=if yes, press 1
 ThanksForAttention=Thank you for attention
 ThanksForAnswer=Thanks for your choice
+SmsMessage=DataArt Enjoy IT

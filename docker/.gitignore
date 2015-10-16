@@ -1,1 +1,7 @@
 *.gcfg
+call-consumer/call-consumer
+conference-call/conference-call
+feedback-call/feedback-call
+feedback-call/feedback-call-portal
+sms-feedback/sms-feedback
+mailagent/mailagent

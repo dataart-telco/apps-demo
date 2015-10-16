@@ -1,12 +1,51 @@
-cp ./common/demo.gcfg ./docker/demo-advertising/
-cp ./common/demo.gcfg ./docker/demo-conference/
-cp ./common/demo.gcfg ./docker/demo-main/
-cp ./common/demo.gcfg ./docker/mailagent/
+mkdir -p out
+cp ./common/demo.gcfg ./out
 
+#build bins
 go get ./...
 go install ./common
-go build -o ./docker/demo-advertising/demo-call-play ./advertising/demo-call-play.go ./advertising/advertisingtcall.go ./advertising/conference.go ./advertising/webserver.go
-go build -o ./docker/demo-advertising/demo-call-play-server ./advertising/demo-call-play-server.go ./advertising/advertisingtcall.go ./advertising/conference.go ./advertising/portal-webserver.go
-go build -o ./docker/demo-conference/demo-conference-server ./conference/demo-conference-server.go ./conference/conference.go ./conference/storage.go ./conference/webserver.go
-go build -o ./docker/demo-main/demo-main-server ./main/demo-main-server.go ./main/sms.go
-go build -o ./docker/mailagent/mailagent ./mailagent/mailagent.go
+
+echo 'Build feedback'
+
+cd ./feedback-call
+go build -o ../out/feedback-call main.go advertisingtcall.go conference.go webserver.go
+go build -o ../out/feedback-call-portal portal-main.go advertisingtcall.go conference.go portal-webserver.go
+cd ../
+
+echo "Build calls-consumer"
+cd ./calls-consumer
+go build -o ../out/calls-consumer
+cd ../
+
+echo 'Build conference-call'
+cd ./conference-call
+go build -o ../out/conference-call
+cd ../
+
+echo 'Build mailagent'
+cd ./mailagent
+go build -o ../out/mailagent
+cd ../
+
+echo 'Build sms-feedback'
+cd ./sms-feedback
+go build -o ../out/sms-feedback
+cd ../
+
+
+echo 'Copy files to docker dirs'
+#copy do docker directory
+cp ./common/demo.gcfg ./docker/conference-call/
+cp ./common/demo.gcfg ./docker/calls-consumer/
+cp ./common/demo.gcfg ./docker/mailagent/
+cp ./common/demo.gcfg ./docker/sms-feedback/
+cp ./common/demo.gcfg ./docker/feedback-call/
+
+cp ./out/calls-consumer ./docker/calls-consumer/
+cp ./out/conference-call ./docker/conference-call
+cp ./out/mailagent ./docker/mailagent
+cp ./out/sms-feedback ./docker/sms-feedback
+cp ./out/feedback-call ./docker/feedback-call
+cp ./out/feedback-call-portal ./docker/feedback-call
+
+echo 'Build completed!'
