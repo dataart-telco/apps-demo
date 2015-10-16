@@ -1,5 +1,5 @@
 *.gcfg
-call-consumer/call-consumer
+calls-consumer/calls-consumer
 conference-call/conference-call
 feedback-call/feedback-call
 feedback-call/feedback-call-portal
