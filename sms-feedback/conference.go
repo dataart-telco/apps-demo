@@ -21,7 +21,7 @@ func (conf Conference) Subscribe() Subscription {
 			msg, e2 := sub.Receive()
 			if e2 != nil {
 				common.Error.Println("receive message error", e2)
-				continue
+				panic(e2)
 			}
 			common.Trace.Println("Message ", msg)
 			switch v := msg.(type) {
