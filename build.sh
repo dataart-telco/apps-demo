@@ -32,6 +32,10 @@ cd ./sms-feedback
 go build -o ../out/sms-feedback
 cd ../
 
+echo 'Build drop-conference'
+cd ./drop-conference
+go build -o ../out/drop-conference
+cd ../
 
 echo 'Copy files to docker dirs'
 #copy do docker directory
@@ -40,6 +44,7 @@ cp ./common/demo.gcfg ./docker/calls-consumer/
 cp ./common/demo.gcfg ./docker/mailagent/
 cp ./common/demo.gcfg ./docker/sms-feedback/
 cp ./common/demo.gcfg ./docker/feedback-call/
+cp ./common/demo.gcfg ./docker/drop-conference
 
 cp ./out/calls-consumer ./docker/calls-consumer/
 cp ./out/conference-call ./docker/conference-call
@@ -47,5 +52,6 @@ cp ./out/mailagent ./docker/mailagent
 cp ./out/sms-feedback ./docker/sms-feedback
 cp ./out/feedback-call ./docker/feedback-call
 cp ./out/feedback-call-portal ./docker/feedback-call
+cp ./out/drop-conference ./docker/drop-conference
 
 echo 'Build completed!'

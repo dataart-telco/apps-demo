@@ -103,8 +103,6 @@ func (n IncomingPhoneNumber) CreateOrUpdate(api RestcommApi, callBack string) er
 
 func (*RestcommApi) Post(path string, params url.Values) error {
 	Trace.Println("Make POST req: url =", path)
-	Trace.Println("\twith params")
-	Trace.Println("\t", params)
 
 	data := params.Encode()
 
