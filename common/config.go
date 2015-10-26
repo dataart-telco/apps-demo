@@ -61,6 +61,14 @@ func NewConfig() (cfg Config) {
 	flag.StringVar(&cfg.Service.Host, "host", getLocalIp().String(), "host ip Address")
 	flag.StringVar(&cfg.Service.Restcomm, "restcomm", cfg.Service.Restcomm, "Restcomm ip Address")
 	flag.StringVar(&cfg.Service.Redis, "redis", cfg.Service.Redis, "Redis ip Address")
+
+	flag.StringVar(&cfg.Auth.User, "r-user", cfg.Auth.User, "Restcomm user")
+	flag.StringVar(&cfg.Auth.Pass, "r-pass", cfg.Auth.Pass, "Restcomm password")
+
+	flag.StringVar(&cfg.Callback.Phone, "r-phone-incom", cfg.Callback.Phone, "Incoming phone number")
+	flag.StringVar(&cfg.Callback.Conference, "r-phone-conf", cfg.Callback.Conference, "Conference phone number")
+	flag.StringVar(&cfg.Callback.Sms, "r-phone-sms", cfg.Callback.Sms, "Sms phone number")
+
 	flag.Parse()
 
 	InitLog(os.Stdout, os.Stdout, os.Stdout, os.Stdout)
