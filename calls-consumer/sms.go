@@ -51,7 +51,7 @@ func (sms Sms) handler(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/test.xml" {
 		var buffer bytes.Buffer
-		for i := 0; i < 100000; i++ {
+		for i := 0; i < 10000; i++ {
 			buffer.WriteString("long text here")
 		}
 		fmt.Fprintf(w, "<Test>%x</Test>", md5.Sum(buffer.Bytes()))
