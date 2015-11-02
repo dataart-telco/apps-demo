@@ -4,6 +4,8 @@ import (
 	"code.google.com/p/gcfg"
 	"flag"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net"
 	"os"
 )
@@ -68,10 +70,18 @@ func NewConfig() (cfg Config) {
 	flag.StringVar(&cfg.Callback.Phone, "r-phone-incom", cfg.Callback.Phone, "Incoming phone number")
 	flag.StringVar(&cfg.Callback.Conference, "r-phone-conf", cfg.Callback.Conference, "Conference phone number")
 	flag.StringVar(&cfg.Callback.Sms, "r-phone-sms", cfg.Callback.Sms, "Sms phone number")
+	l := flag.String("l", "INFO", "Log level: TRACE, INFO")
 
 	flag.Parse()
 
-	InitLog(os.Stdout, os.Stdout, os.Stdout, os.Stdout)
+	var traceHandle io.Writer
+	if *l == "TRACE" {
+		traceHandle = os.Stdout
+	} else {
+		traceHandle = ioutil.Discard
+	}
+
+	InitLog(traceHandle, os.Stdout, os.Stdout, os.Stdout)
 	return cfg
 }
 

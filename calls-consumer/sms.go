@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"crypto/md5"
 	"fmt"
 	"net/http"
 	"tad-demo/common"
@@ -23,14 +25,14 @@ type Sms struct {
 }
 
 func (sms Sms) RegisterNumber(number string) {
-	fmt.Println("\tRegister number:", number)
+	common.Info.Println("\tRegister number:", number)
 
 	callBack := fmt.Sprintf("http://%s/register", cfg.GetExternalAddress(cfg.ServerPort.Main))
 	common.NewIncomingPhoneNumber("", cfg.Callback.Phone).CreateOrUpdate(restcommApi, callBack)
 }
 
 func (sms Sms) Subscribe() Subscription {
-	fmt.Println("Start main web app v.1.0")
+	common.Info.Println("Start main web app v.1.0")
 
 	sms.subscription = Subscription{acceptedQueue: make(chan string, 100)}
 
@@ -46,18 +48,29 @@ func (sms Sms) Subscribe() Subscription {
 
 func (sms Sms) handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/xml")
+
+	if r.URL.Path == "/test.xml" {
+		var buffer bytes.Buffer
+		for i := 0; i < 100000; i++ {
+			buffer.WriteString("long text here")
+		}
+		fmt.Fprintf(w, "<Test>%x</Test>", md5.Sum(buffer.Bytes()))
+		buffer.Reset()
+		return
+	}
 	fmt.Fprintf(w, "<Response><Hangup/></Response>")
 
 	from := r.PostFormValue("From")
 
-	fmt.Println("\tReceive ", r.Method, " call from ", from)
-
-	from = common.ConvertToSip(from)
-	sms.subscription.acceptedQueue <- from
+	common.Trace.Println("\tReceive ", r.Method, " call from ", from)
+	if from != "" {
+		from = common.ConvertToSip(from)
+		sms.subscription.acceptedQueue <- from
+	}
 }
 
 func (sms Sms) Await() {
-	fmt.Println("wait for ctrl+c")
+	common.Info.Println("wait for ctrl+c")
 	common.WaitCtrlC()
 }
 
