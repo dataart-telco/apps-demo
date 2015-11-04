@@ -1,4 +1,5 @@
 package main
+
 import "tad-demo/common"
 
 var cfg = common.NewConfig()
@@ -17,8 +18,10 @@ func main() {
 	storage := Storage{}
 	subscription := storage.Subscribe()
 
-	for{
+	for {
 		pstn := subscription.Receive()
 		conference.Add(pstn)
 	}
+
+	common.Info.Println("Finished")
 }

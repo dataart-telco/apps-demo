@@ -4,6 +4,7 @@ pass = 42d8aa7cde9c78c4757862d84620c335
 [Service]
 redis = localhost:6379
 restcomm = 192.168.176.220:8080
+recorder = 
 [Redis]
 mainChannel = main
 confChannel = conf
@@ -25,4 +26,5 @@ Question=Are you able to launch services at Google speed? Are you interested in 
 Answer1=if yes, press 1
 ThanksForAttention=Thank you for attention
 ThanksForAnswer=Thanks for your choice
-SmsMessage=Thank you for attending DataArt's TadSummit 2015 Autoscaling Demo. Learn more at http://goo.gl/SQRRtz
+SmsMessage=Thank you for attending DataArt's TadSummit 2015 Autoscaling Demo. Call record is %s. Learn more at http://goo.gl/SQRRtz
+SmsMessageSimple=Thank you for attending DataArt's TadSummit 2015 Autoscaling Demo. Learn more at http://goo.gl/SQRRtz

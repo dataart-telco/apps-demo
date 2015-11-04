@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"tad-demo/common"
@@ -18,10 +19,36 @@ type SmsService struct {
 func (s SmsService) SendSms(to string) {
 	common.Trace.Println("Send sms to", to)
 	//TODO cfg.Callback.Sms
-	err := restcommApi.SendSms(to, "DataArt", cfg.Messages.SmsMessage)
+	record := s.GetRecordUrl()
+	sms := cfg.Messages.SmsMessageSimple
+	if record != "" {
+		record = common.GetShortLink(record)
+		if record != "" {
+			sms = fmt.Sprintf(cfg.Messages.SmsMessage, record)
+		}
+	}
+	common.Trace.Println("Sms message:", sms)
+	err := restcommApi.SendSms(to, "DataArt", sms)
 	if err != nil {
 		common.Error.Println("Send sms error", err)
 	}
+}
+
+func (s SmsService) GetRecordUrl() string {
+	if cfg.Service.Recorder == "" {
+		return ""
+	}
+	host := "http://" + cfg.Service.Recorder
+	resp, err := http.Get(host + "/last")
+	if err != nil {
+		common.Error.Println("ger record file name from", host, "error", err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	wav := string(body)
+	return host + "/" + wav
 }
 
 func (s SmsService) Start() {
@@ -40,7 +67,7 @@ func (s SmsService) Start() {
 }
 
 func (s SmsService) startWebServer() {
-	common.Info.Println("\tStart web server")
+	common.Info.Println("\tStart web server: recorder =", cfg.Service.Recorder)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		common.Trace.Println("\t<- http request:", r.URL)

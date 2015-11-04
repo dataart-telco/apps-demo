@@ -23,6 +23,7 @@ func (s Storage) Subscribe() Subscription {
 		for {
 			msg, e2 := sub.Receive()
 			if e2 != nil {
+				common.Error.Println("Receive message from Redis error")
 				panic(e2)
 			}
 			switch v := msg.(type) {

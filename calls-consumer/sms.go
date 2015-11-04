@@ -32,7 +32,7 @@ func (sms Sms) RegisterNumber(number string) {
 }
 
 func (sms Sms) Subscribe() Subscription {
-	common.Info.Println("Start main web app v.1.0")
+	common.Info.Println("Start main web app v.1.0.b100")
 
 	sms.subscription = Subscription{acceptedQueue: make(chan string, 100)}
 
@@ -51,7 +51,7 @@ func (sms Sms) handler(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/test.xml" {
 		var buffer bytes.Buffer
-		for i := 0; i < 10000; i++ {
+		for i := 0; i < 100; i++ {
 			buffer.WriteString("long text here")
 		}
 		fmt.Fprintf(w, "<Test>%x</Test>", md5.Sum(buffer.Bytes()))

@@ -22,6 +22,7 @@ type Config struct {
 		Redis    string
 		Restcomm string
 		Host     string
+		Recorder string
 	}
 
 	Redis struct {
@@ -52,6 +53,7 @@ type Config struct {
 		ThanksForAttention string
 		ThanksForAnswer    string
 		SmsMessage         string
+		SmsMessageSimple   string
 	}
 }
 
@@ -63,6 +65,7 @@ func NewConfig() (cfg Config) {
 	flag.StringVar(&cfg.Service.Host, "host", getLocalIp().String(), "host ip Address")
 	flag.StringVar(&cfg.Service.Restcomm, "restcomm", cfg.Service.Restcomm, "Restcomm ip Address")
 	flag.StringVar(&cfg.Service.Redis, "redis", cfg.Service.Redis, "Redis ip Address")
+	flag.StringVar(&cfg.Service.Recorder, "rec", cfg.Service.Recorder, "Recorder host")
 
 	flag.StringVar(&cfg.Auth.User, "r-user", cfg.Auth.User, "Restcomm user")
 	flag.StringVar(&cfg.Auth.Pass, "r-pass", cfg.Auth.Pass, "Restcomm password")
@@ -70,6 +73,7 @@ func NewConfig() (cfg Config) {
 	flag.StringVar(&cfg.Callback.Phone, "r-phone-incom", cfg.Callback.Phone, "Incoming phone number")
 	flag.StringVar(&cfg.Callback.Conference, "r-phone-conf", cfg.Callback.Conference, "Conference phone number")
 	flag.StringVar(&cfg.Callback.Sms, "r-phone-sms", cfg.Callback.Sms, "Sms phone number")
+
 	l := flag.String("l", "INFO", "Log level: TRACE, INFO")
 
 	flag.Parse()
