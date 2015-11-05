@@ -3,11 +3,13 @@ package common
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 )
 
@@ -30,6 +32,9 @@ func MakeJsonPost(url string, jsonBody string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return "", errors.New(fmt.Sprintf("Make json request respose is %d", resp.StatusCode))
+	}
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	Trace.Println("Response body", string(body))
@@ -46,11 +51,31 @@ func MakeJsonPost(url string, jsonBody string) (string, error) {
 	return bundle["id"].(string), nil
 }
 
-func GetShortLink(url string) string {
+func GetGoogleShortLink(url string) string {
 	resp, err := MakeJsonPost("https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyCsMGYHHdwvQYgOAaskd-GZfGSPe1Tk66w", fmt.Sprintf("{\"longUrl\": \"%s\"}", url))
 	if err != nil {
 		Error.Println("Get short url error", err)
 		return ""
 	}
 	return resp
+}
+
+func GetShortLink(url string) string {
+	resp, err := http.Get("https://api-ssl.bitly.com/v3/shorten?access_token=1beca81b7f09ddd49d541fa802042cd19c468529&format=txt&longUrl=" + url)
+	if err != nil {
+		Error.Println("Make shortlink error", err)
+		return ""
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		Error.Println("Make shortlink respose is", resp.StatusCode)
+		return ""
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		Error.Println("Mae shortlink error - read body", err)
+		return ""
+	}
+	return strings.Trim(string(body), "\n")
 }

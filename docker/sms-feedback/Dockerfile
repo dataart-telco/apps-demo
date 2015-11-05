@@ -2,8 +2,12 @@ FROM ubuntu
 
 MAINTAINER gdubina@dataart.com
 
+
 COPY sms-feedback /demo/
 COPY demo.gcfg /demo/
+
+RUN apt-get update  
+RUN apt-get install -y ca-certificates
 
 EXPOSE 30794
 
