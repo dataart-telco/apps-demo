@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"regexp"
 )
 
 type CallInfo struct {
@@ -228,15 +229,14 @@ func GetClientName(client string) string {
 }
 
 func ConvertToRestcommNumber(client string) string {
-	if strings.HasPrefix(client, "sip:") {
-		return "client:" + client[4:len(client)]
-	}
-	return client
+	return client;
 }
 
+var digistRegExp = regexp.MustCompile("[0-9]+")
+
 func ConvertToSip(from string) string {
-	if !strings.HasPrefix(from, "+") {
-		return "sip:" + from
+	if digistRegExp.MatchString(from) {
+		return "sip:" + from + "@80.250.109.132"
 	}
-	return from
+	return "client:" + from
 }

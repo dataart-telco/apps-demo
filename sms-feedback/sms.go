@@ -18,6 +18,10 @@ type SmsService struct {
 
 func (s SmsService) SendSms(to string) {
 	common.Trace.Println("Send sms to", to)
+
+	to = common.ConvertToSip(to)
+
+	common.Trace.Println("To is converted:", to)
 	//TODO cfg.Callback.Sms
 	record := s.GetRecordUrl()
 	sms := cfg.Messages.SmsMessageSimple
