@@ -19,7 +19,7 @@ type SmsService struct {
 func (s SmsService) SendSms(to string) {
 	common.Trace.Println("Send sms to", to)
 
-	to = common.ConvertToSip(to)
+	to = common.ConvertToSip(to, cfg.Sip.DidProvider)
 
 	common.Trace.Println("To is converted:", to)
 	//TODO cfg.Callback.Sms

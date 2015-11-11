@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
 )
 
 type CallInfo struct {
@@ -229,14 +229,14 @@ func GetClientName(client string) string {
 }
 
 func ConvertToRestcommNumber(client string) string {
-	return client;
+	return client
 }
 
 var digistRegExp = regexp.MustCompile("[0-9]+")
 
-func ConvertToSip(from string) string {
+func ConvertToSip(from string, didProvider string) string {
 	if digistRegExp.MatchString(from) {
-		return "sip:" + from + "@80.250.109.132"
+		return "sip:" + from + "@" + didProvider
 	}
 	return "client:" + from
 }

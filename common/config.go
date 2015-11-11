@@ -55,6 +55,10 @@ type Config struct {
 		SmsMessage         string
 		SmsMessageSimple   string
 	}
+
+	Sip struct {
+		DidProvider string
+	}
 }
 
 func NewConfig() (cfg Config) {
@@ -73,6 +77,7 @@ func NewConfig() (cfg Config) {
 	flag.StringVar(&cfg.Callback.Phone, "r-phone-incom", cfg.Callback.Phone, "Incoming phone number")
 	flag.StringVar(&cfg.Callback.Conference, "r-phone-conf", cfg.Callback.Conference, "Conference phone number")
 	flag.StringVar(&cfg.Callback.Sms, "r-phone-sms", cfg.Callback.Sms, "Sms phone number")
+	flag.StringVar(&cfg.Sip.DidProvider, "dp", cfg.Sip.DidProvider, "Did provider sip domain")
 
 	l := flag.String("l", "INFO", "Log level: TRACE, INFO")
 
