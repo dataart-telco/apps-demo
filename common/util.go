@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 )
 
@@ -61,7 +60,8 @@ func GetGoogleShortLink(url string) string {
 }
 
 func GetShortLink(url string) string {
-	resp, err := http.Get("https://api-ssl.bitly.com/v3/shorten?access_token=1beca81b7f09ddd49d541fa802042cd19c468529&format=txt&longUrl=" + url)
+	Trace.Println("make short link:", url)
+	resp, err := http.Get("https://api-ssl.bitly.com/v3/shorten?access_token=1beca81b7f09ddd49d541fa802042cd19c468529&longUrl=" + url)
 	if err != nil {
 		Error.Println("Make shortlink error", err)
 		return ""
@@ -77,5 +77,18 @@ func GetShortLink(url string) string {
 		Error.Println("Mae shortlink error - read body", err)
 		return ""
 	}
-	return strings.Trim(string(body), "\n")
+
+	bundle := make(map[string]interface{})
+	defer func() {
+		r := recover()
+		if r != nil {
+			Error.Println("Catch panic in GetShortLink:", string(body), " | panic:", r)
+		}
+	}()
+	json.Unmarshal(body, &bundle)
+	if bundle["status_code"].(float64) != 200 {
+		return ""
+	}
+	shortLink := bundle["data"].(map[string]interface{})["url"].(string)
+	return shortLink
 }

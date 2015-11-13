@@ -19,7 +19,7 @@ type SmsService struct {
 func (s SmsService) SendSms(to string) {
 	common.Trace.Println("Send sms to", to)
 
-	to = common.ConvertToSip(to, cfg.Sip.DidProvider)
+	to = common.ConvertToSipSms(to, cfg.Sip.DidProvider)
 
 	common.Trace.Println("To is converted:", to)
 	//TODO cfg.Callback.Sms
@@ -49,6 +49,10 @@ func (s SmsService) GetRecordUrl() string {
 		return ""
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return ""
+	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	wav := string(body)
