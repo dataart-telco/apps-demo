@@ -242,9 +242,12 @@ func ConvertToSip(from string, didProvider string) string {
 }
 
 func ConvertToSipSms(from string, didProvider string) string {
-	if digistRegExp.MatchString(from) {
+	//for sms we will have settings in config
+	return from
+
+	/*    if digistRegExp.MatchString(from) {
 		return "sip:" + from + "@" + didProvider
 	}
 	// no need client: prefix for sms
-	return from
+	return from*/
 }
