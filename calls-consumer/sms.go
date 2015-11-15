@@ -64,7 +64,6 @@ func (sms Sms) handler(w http.ResponseWriter, r *http.Request) {
 
 	common.Trace.Println("\tReceive ", r.Method, " call from ", from)
 	if from != "" {
-		from = common.ConvertToSip(from, cfg.Sip.DidProvider)
 		sms.subscription.acceptedQueue <- from
 	}
 }

@@ -17,7 +17,7 @@ func (conf Conference) RegisterNumber(phone string) {
 }
 
 func (conf Conference) Add(client string) {
-	to := common.ConvertToRestcommNumber(client)
+	to := common.ConvertToSipCall(client, cfg.Sip.DidProvider)
 
 	call, err := restcommApi.MakeCall(cfg.Messages.DialFrom, to,
 		fmt.Sprintf("http://%s/make-conference.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)),
@@ -29,5 +29,5 @@ func (conf Conference) Add(client string) {
 	}
 
 	db.RPush(common.DB_KEY_URI, call.Uri)
-	db.Set(call.Sid, to, 0)
+	db.Set(call.Sid, client, 0)
 }

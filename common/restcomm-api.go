@@ -76,7 +76,8 @@ func (n IncomingPhoneNumber) Update(api RestcommApi, callBack string) error {
 		"VoiceUrl": {callBack},
 		"SmsUrl":   {callBack}}
 
-	return api.Post(path, data)
+	_, err := api.Post(path, data)
+	return err
 }
 
 func (n IncomingPhoneNumber) Create(api RestcommApi, callBack string) error {
@@ -89,7 +90,8 @@ func (n IncomingPhoneNumber) Create(api RestcommApi, callBack string) error {
 		"SmsUrl":      {callBack},
 		"PhoneNumber": {n.PhoneNumber}}
 
-	return api.Post(path, data)
+	_, err := api.Post(path, data)
+	return err
 }
 
 func (n IncomingPhoneNumber) CreateOrUpdate(api RestcommApi, callBack string) error {
@@ -102,7 +104,7 @@ func (n IncomingPhoneNumber) CreateOrUpdate(api RestcommApi, callBack string) er
 	}
 }
 
-func (*RestcommApi) Post(path string, params url.Values) error {
+func (*RestcommApi) Post(path string, params url.Values) (int, error) {
 	Trace.Println("Make POST req: url =", path)
 
 	data := params.Encode()
@@ -118,13 +120,13 @@ func (*RestcommApi) Post(path string, params url.Values) error {
 
 	resp, err := client.Do(r)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if resp.StatusCode != 200 {
-		return errors.New("Resp code is not 200 for " + path)
+		return resp.StatusCode, errors.New("Resp code is not 200 for " + path + "; status = " + resp.Status)
 	}
-	return nil
+	return 200, nil
 }
 
 func (api RestcommApi) CompleteCallByUri(callUri string) bool {
@@ -132,10 +134,16 @@ func (api RestcommApi) CompleteCallByUri(callUri string) bool {
 }
 
 func (api RestcommApi) UpdateCallByUri(callUri string, params url.Values) bool {
+	if api.Server == "" {
+		Error.Println("RestcommApi.UpdateCallByUri: api.Server is empty")
+		return false
+	}
 	acc := api.User + ":" + api.Pass
 	path := fmt.Sprintf("http://%s@%s/restcomm%s", acc, api.Server, callUri)
-	err := api.Post(path, params)
-	if err != nil {
+	status, err := api.Post(path, params)
+
+	if err != nil && status == 0 {
+		Error.Println("RestcommApi.UpdateCallByUri: post error - ", err)
 		return false
 	}
 	return true
@@ -197,7 +205,7 @@ func (api RestcommApi) SubscribeStatus(sid string, statusCallback string) error 
 	path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/Calls/%s", acc, api.Server, api.User, sid)
 	params := url.Values{"StatusCallback": {statusCallback}, "Url": {statusCallback}}
 
-	errPost := api.Post(path, params)
+	_, errPost := api.Post(path, params)
 	if errPost != nil {
 		return errPost
 	}
@@ -211,7 +219,7 @@ func (api RestcommApi) SendSms(to string, from string, msg string) error {
 	path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/SMS/Messages", acc, api.Server, api.User)
 	params := url.Values{"To": {to}, "From": {from}, "Body": {msg}}
 
-	err := api.Post(path, params)
+	_, err := api.Post(path, params)
 	if err != nil {
 		Error.Println("Send message error", err)
 	}
@@ -228,13 +236,9 @@ func GetClientName(client string) string {
 	return client
 }
 
-func ConvertToRestcommNumber(client string) string {
-	return client
-}
-
 var digistRegExp = regexp.MustCompile("[0-9]+")
 
-func ConvertToSip(from string, didProvider string) string {
+func ConvertToSipCall(from string, didProvider string) string {
 	if digistRegExp.MatchString(from) {
 		return "sip:" + from + "@" + didProvider
 	}

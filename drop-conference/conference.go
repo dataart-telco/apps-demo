@@ -17,7 +17,7 @@ func (conf Conference) GetParticipants() []string {
 
 	for _, i := range db.LRange(common.DB_KEY_URI, 0, 1000).Val() {
 		uri := i[0 : len(i)-5]
-		sid := uri[strings.LastIndex(i, "/")+1 : len(uri)]
+		sid := uri[strings.LastIndex(uri, "/")+1 : len(uri)]
 		phonesSid = append(phonesSid, sid)
 	}
 	return phonesSid
@@ -25,10 +25,25 @@ func (conf Conference) GetParticipants() []string {
 
 func (conf Conference) Drop() {
 	common.Info.Println("Drop conference")
-	i := db.LPop(common.DB_KEY_URI).Val()
-	for i != "" {
+	for _, i := range db.LRange(common.DB_KEY_URI, 0, 1000).Val() {
 		uri := i[0 : len(i)-5]
-		restcommApi.CompleteCallByUri(uri)
-		i = db.LPop(common.DB_KEY_URI).Val()
+		dropped := restcommApi.CompleteCallByUri(uri)
+		if dropped {
+			sid := uri[strings.LastIndex(uri, "/")+1 : len(uri)]
+			conf.NotifySms(sid)
+			db.LRem(common.DB_KEY_URI, 0, i)
+		} else {
+			common.Error.Println("Can't drop call: ", uri)
+		}
 	}
+}
+
+func (conf Conference) NotifySms(sid string) {
+	to := db.Get(sid).Val()
+	if to == "" {
+		common.Info.Println("\t to is EMPTY for", sid)
+		return
+	}
+	common.Info.Println("Notify sms: " + to)
+	db.Publish(cfg.Redis.ConfChannel, to)
 }

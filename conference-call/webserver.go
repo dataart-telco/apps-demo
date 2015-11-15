@@ -39,10 +39,9 @@ func (w WebServer) startWebServer() {
 			if callStatus == "in-progress" {
 				//common.Trace.Println("add in-progress call to db:", callSid, "to =", to)
 				//db.Set(cfg.Redis.InProgressKey+":"+callSid, callSid, 1*time.Hour)
-				//db.Publish(cfg.Redis.ConfChannel, callSid)
 			} else if callStatus == "completed" {
 				common.Trace.Println("add completed call to stream:", callSid, "to =", to)
-				db.Publish(cfg.Redis.ConfChannel, to)
+				//db.Publish(cfg.Redis.ConfChannel, to)
 			}
 		} else {
 			fmt.Fprintf(w,
