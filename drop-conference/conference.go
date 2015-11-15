@@ -23,27 +23,40 @@ func (conf Conference) GetParticipants() []string {
 	return phonesSid
 }
 
-func (conf Conference) Drop() {
+func (conf Conference) Drop() []string {
 	common.Info.Println("Drop conference")
+	numbers := make(map[string]bool)
 	for _, i := range db.LRange(common.DB_KEY_URI, 0, 1000).Val() {
 		uri := i[0 : len(i)-5]
 		dropped := restcommApi.CompleteCallByUri(uri)
 		if dropped {
 			sid := uri[strings.LastIndex(uri, "/")+1 : len(uri)]
-			conf.NotifySms(sid)
+			to := db.Get(sid).Val()
+			numbers[to] = true
 			db.LRem(common.DB_KEY_URI, 0, i)
 		} else {
 			common.Error.Println("Can't drop call: ", uri)
 		}
 	}
+	return set(numbers)
 }
 
-func (conf Conference) NotifySms(sid string) {
-	to := db.Get(sid).Val()
-	if to == "" {
-		common.Info.Println("\t to is EMPTY for", sid)
-		return
+func (conf Conference) NotifySms(numbers []string) {
+	common.Trace.Println("NotifySms start")
+	for _, to := range numbers {
+		if to == "" {
+			common.Info.Println("\t to is EMPTY")
+			continue
+		}
+		common.Info.Println("Notify sms: " + to)
+		db.Publish(cfg.Redis.ConfChannel, to)
 	}
-	common.Info.Println("Notify sms: " + to)
-	db.Publish(cfg.Redis.ConfChannel, to)
+}
+
+func set(values map[string]bool) []string {
+	keys := make([]string, 0, len(values))
+	for k, _ := range values {
+		keys = append(keys, k)
+	}
+	return keys
 }

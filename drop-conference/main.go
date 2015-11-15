@@ -15,7 +15,9 @@ func main() {
 
 	common.Info.Println("Participants count", len(participants))
 
-	conference.Drop()
+	participants = conference.Drop()
+
+	conference.NotifySms(participants)
 
 	common.Info.Println("Press Ctrl+C")
 
