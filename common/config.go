@@ -1,7 +1,7 @@
 package common
 
 import (
-	"code.google.com/p/gcfg"
+	"github.com/scalingdata/gcfg"
 	"flag"
 	"fmt"
 	"io"
