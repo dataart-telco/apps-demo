@@ -4,8 +4,9 @@ import (
 	"gopkg.in/redis.v3"
 	"tad-demo/common"
 )
-
+var cfg = common.NewConfig()
 var db = common.NewDbClient(cfg.Service.Redis)
+var restcommApi = common.NewRestcommApi(cfg.Service.Restcomm, cfg.Auth.User, cfg.Auth.Pass)
 
 type Listener struct {
 }
@@ -24,8 +25,14 @@ func (l Listener) Subscribe() {
 			}
 			switch v := msg.(type) {
 			case *redis.Message:
-				//poke restcomm for call duration
-				//poke opencell for billing using duration
+				callStatus = common.NewCallStatus(msg)
+				callInfo, err = restcommApi.GetCallInfo(msg.CallSid)
+				if err != nil {
+					common.Error.Println("opencell-billing: Failed to query restcomm for call sid:%s", msg.CallSid)
+				} else {
+					//opencell goes here
+					db.Set()
+				}
 			}
 		}
 	}()
