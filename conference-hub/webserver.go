@@ -6,6 +6,7 @@ import (
 	"time"
 	"bytes"
 	"crypto/md5"
+	common "tad-demo/common"
 )
 
 type WebServerCallback interface{
@@ -22,7 +23,7 @@ func (w WebServer) Start() {
 
 	url := fmt.Sprintf("http://%s/ping.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference))
 	for i := 0; i < 15; i++ {
-		fmt.Println("Wait until server is ready...")
+		common.Info.Println("Wait until server is ready...")
 		time.Sleep(1 * time.Second)
 
 		resp, err := http.Get(url)
@@ -33,7 +34,7 @@ func (w WebServer) Start() {
 }
 
 func (self WebServer) startWebServer() {
-	fmt.Println("\tStart conference web server")
+	common.Info.Println("\tStart conference web server")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/xml")
@@ -46,16 +47,20 @@ func (self WebServer) startWebServer() {
 			buffer.Reset()
 			return
 		}else if r.URL.Path == "/call-status.xml" {
-			fmt.Println("\t<- http request:", r.URL)
+			common.Info.Println("\t<- http request:", r.URL)
 			to := r.FormValue("To")
 			callStatus := r.FormValue("CallStatus")
 			callSid := r.FormValue("CallSid")
 			self.callback.HandleCallStatusChanged(to, callStatus, callSid)
-		} else {
-			fmt.Println("\t<- http request:", r.URL)
-			from := r.FormValue("From")
+		} else if r.URL.Path == "/register"{
+			common.Info.Println("\t<- register request:", r.URL)
+			from := r.PostFormValue("From")
+			common.Info.Println("\t<- http request:", r.URL, from)
 			resp := self.callback.HandleIncomingCall(from)
 			fmt.Fprint(w, resp)
+		} else {
+			common.Info.Println("\t<- http request:", r.URL)
+			fmt.Fprintf(w, "<Response><Hangup/></Response>")
 		}
 	})
 

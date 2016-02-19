@@ -16,11 +16,9 @@ type CallStatus struct {
 }
 
 type Conference struct {
-	incomingChannel chan string
-	statusChannel chan CallStatus
 }
 
-func (conf Conference) RegisterNumber() {
+func (conf* Conference) RegisterNumber() {
 	fmt.Println("\tRegister number:", cfg.Callback.Phone, cfg.Callback.Conference)
 
 	callBack := fmt.Sprintf("http://%s/register", cfg.GetExternalAddress(cfg.ServerPort.Conference))
@@ -29,21 +27,27 @@ func (conf Conference) RegisterNumber() {
 	common.NewIncomingPhoneNumber("", cfg.Callback.Conference).CreateOrUpdate(restcommApi, "")
 }
 
-func (conf Conference) Subscribe() {
+func (conf* Conference) Subscribe() {
 	common.Info.Println("Start conference hub app v.2.0")
+	/*conf.incomingChannel = make(chan string, 100)
+	conf.statusChannel = make(chan CallStatus, 100)
 
 	go func() {
-		from := <- conf.incomingChannel
-		conf.Add(from)
+		for {
+			from := <- conf.incomingChannel
+			conf.Add(from)
+		}
 	}()
 
 	go func() {
-		callsStatus := <- conf.statusChannel
-		conf.FireCallStatus(callsStatus)
-	}()
+		for {
+			callsStatus := <- conf.statusChannel
+			conf.FireCallStatus(callsStatus)
+		}
+	}()*/
 }
 
-func (conf Conference) FireCallStatus(callStatus CallStatus) {
+func (conf* Conference) FireCallStatus(callStatus CallStatus) {
 	bytes, _ := json.Marshal(&callStatus)
 	db.Publish("callStatus", string(bytes))
 	/*if callStatus == "in-progress" {
@@ -55,20 +59,20 @@ func (conf Conference) FireCallStatus(callStatus CallStatus) {
 	}*/
 }
 
-func (conf Conference) Add(from string) {
+func (conf* Conference) Add(from string) {
 	to := common.ConvertToSipCall(from, cfg.Sip.DidProvider)
 
-	call, err := restcommApi.MakeCall(cfg.Messages.DialFrom, to,
+	/*call, err := restcommApi.MakeCall(cfg.Messages.DialFrom, to,
 		fmt.Sprintf("http://%s/make-conference.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)),
 		fmt.Sprintf("http://%s/call-status.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference)))
 
 	if err != nil {
 		fmt.Println("ERROR: Call to", to, " with erorr", err)
 		return
-	}
+	}*/
 
-	db.RPush(common.DB_KEY_URI, call.Uri)
-	db.Set(call.Sid, from, 0)
+	//db.RPush(common.DB_KEY_URI, call.Uri)
+	//db.Set(call.Sid, from, 0)
 
 	key := "conf:" + from
 	db.Set(key, from, 0)
@@ -76,15 +80,22 @@ func (conf Conference) Add(from string) {
 
 func (conf Conference) HandleCallStatusChanged(to string, callStatus string, callSid string){
 	common.Trace.Println("call status chnaged: ", callSid, "to =", to, "status=", callStatus)
-	conf.statusChannel <- CallStatus{To: to, CallStatus: callStatus, CallSid: callSid}
+	go func() {
+		conf.FireCallStatus(CallStatus{To: to, CallStatus: callStatus, CallSid: callSid})
+	}()
 }
 
 func (conf Conference) HandleIncomingCall(from string) string {
+	common.Trace.Println("HandleIncomingCall:", from)
 	if from != "" {
-		conf.incomingChannel <- from
+		go func() {
+			conf.Add(from)
+		}()
 	}
-	return fmt.Sprintf("<Response><Say>%s</Say><Dial><Conference startConferenceOnEnter=\"true\">%s</Conference></Dial></Response>",
+	resp := fmt.Sprintf("<Response><Say>%s</Say><Dial><Conference startConferenceOnEnter=\"true\">%s</Conference></Dial></Response>",
 				cfg.Messages.ConferenceWelcome, cfg.Callback.Conference)
+	common.Trace.Println("HandleIncomingCall resp:", resp)
+	return resp
 }
 
 

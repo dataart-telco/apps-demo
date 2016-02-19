@@ -18,5 +18,6 @@ func main() {
 
 	conference.Subscribe()
 
+    common.WaitCtrlC()
 	common.Info.Println("Finished")
 }
