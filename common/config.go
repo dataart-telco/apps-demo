@@ -25,6 +25,7 @@ type Config struct {
 		Restcomm string
 		Host     string
 		Recorder string
+		Opencell string
 	}
 
 	Redis struct {
