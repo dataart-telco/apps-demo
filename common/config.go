@@ -11,6 +11,7 @@ import (
 )
 
 const DB_KEY_URI = "uri"
+const CHANNEL_CALL_STATUS = "call_status"
 
 type Config struct {
 	Auth struct {

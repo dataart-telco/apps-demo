@@ -25,24 +25,24 @@ func (w WebServer) Start() {
 	}
 }
 
-func (w WebServer) startWebServer() {
+func (self WebServer) startWebServer() {
 	fmt.Println("\tStart conference web server")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("\t<- http request:", r.URL)
 
 		w.Header().Set("Content-Type", "text/xml")
-		if r.URL.Path == "/call-status.xml" {
+		if r.URL.Path == "/dial-status.xml" {
+			//TODO handle dial status ???
+			common.Info.Println("\t<- http request:", r.URL)
+		} else if r.URL.Path == "/call-status.xml" {
+			common.Info.Println("\t<- http request:", r.URL)
 			to := r.FormValue("To")
 			callStatus := r.FormValue("CallStatus")
 			callSid := r.FormValue("CallSid")
-			if callStatus == "in-progress" {
-				//common.Trace.Println("add in-progress call to db:", callSid, "to =", to)
-				//db.Set(cfg.Redis.InProgressKey+":"+callSid, callSid, 1*time.Hour)
-			} else if callStatus == "completed" {
-				common.Trace.Println("add completed call to stream:", callSid, "to =", to)
-				//db.Publish(cfg.Redis.ConfChannel, to)
-			}
+			go func(){
+				self.handleCallStatusChanged(to, callStatus, callSid)
+			}()
 		} else {
 			fmt.Fprintf(w,
 				"<Response><Say>%s</Say><Dial><Conference startConferenceOnEnter=\"true\">%s</Conference></Dial></Response>",
@@ -54,4 +54,9 @@ func (w WebServer) startWebServer() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (self WebServer) handleCallStatusChanged(to string, callStatus string, callSid string) {
+	status := common.CallStatus{To: to, CallStatus: callStatus, CallSid: callSid}
+	db.Publish(common.CHANNEL_CALL_STATUS, status.ToJson())
 }
