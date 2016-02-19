@@ -38,7 +38,12 @@ func (conf Conference) Drop() []string {
 			common.Error.Println("Can't drop call: ", uri)
 		}
 	}
+	conf.NotifyDropChannel()
 	return set(numbers)
+}
+
+func (conf Conference) NotifyDropChannel() {
+	db.Publish(common.CHANNEL_CONF_DROPPED, "true")
 }
 
 func (conf Conference) NotifySms(numbers []string) {
