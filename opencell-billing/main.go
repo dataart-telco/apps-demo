@@ -8,8 +8,8 @@ import (
 
 func main() {
 	common.Info.Println("Opencell billing")
-
-	common.Info.Println("Press Ctrl+C")
-
-	common.WaitCtrlC()
+	callListener := BillingListener{}
+	callListener.Subscribe()
+	statsWebServer := BillingWebServer{}
+	statsWebServer.Start()
 }
