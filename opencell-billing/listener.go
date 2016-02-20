@@ -30,7 +30,8 @@ func (l BillingListener) Subscribe() {
 					if err != nil {
 						common.Error.Println("opencell-billing: Failed to query restcomm for call sid:%s", callStatus.CallSid)
 					} else {
-						//opencell goes here
+						time := callInfo.Duration
+						timestamp = 
 
 					}
 				}
