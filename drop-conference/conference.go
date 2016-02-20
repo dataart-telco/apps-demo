@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"encoding/json"
 	"tad-demo/common"
 )
 
@@ -26,8 +27,11 @@ func (conf Conference) GetParticipants() []string {
 func (conf Conference) Drop() []string {
 	common.Info.Println("Drop conference")
 	numbers := make(map[string]bool)
+	phonesSid := make([]string, 0)
 	for _, i := range db.LRange(common.DB_KEY_URI, 0, 1000).Val() {
 		uri := i[0 : len(i)-5]
+		sid := uri[strings.LastIndex(uri, "/")+1 : len(uri)]
+		phonesSid = append(phonesSid, sid)
 		dropped := restcommApi.CompleteCallByUri(uri)
 		if dropped {
 			sid := uri[strings.LastIndex(uri, "/")+1 : len(uri)]
@@ -38,12 +42,13 @@ func (conf Conference) Drop() []string {
 			common.Error.Println("Can't drop call: ", uri)
 		}
 	}
-	conf.NotifyDropChannel()
+	conf.NotifyDropChannel(phonesSid)
 	return set(numbers)
 }
 
-func (conf Conference) NotifyDropChannel() {
-	db.Publish(common.CHANNEL_CONF_DROPPED, "true")
+func (conf Conference) NotifyDropChannel(phonesSid []string) {
+	array, _ := json.Marshal(&phonesSid)
+	db.Publish(common.CHANNEL_CONF_DROPPED, string(array))
 }
 
 func (conf Conference) NotifySms(numbers []string) {
