@@ -12,6 +12,8 @@ type OpencellAPI struct {
 	payment Payment
 }
 
+const TIME_FORMAT = "2006-01-02T15:04:05.000Z"
+
 func NewOpencellAPI(basicAuthStr string, srvUrl string) OpencellAPI {
 	srvUrl = "http://" + srvUrl
 	return OpencellAPI {

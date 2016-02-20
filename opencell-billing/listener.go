@@ -60,8 +60,7 @@ func (l BillingListener) SubscribeCallerList() {
 	//subscribe for events from call_status queue
 	_, err := db.Get("last_conf_time").Result()
 	if err != nil {
-		layout := "2006-01-02T15:04:05.000Z"
-		db.Set("last_conf_time", time.Date(1970, 1, 1, 1, 1, 1, 1, time.Now().Location()).Format(layout),0)
+		db.Set("last_conf_time", time.Date(1970, 1, 1, 1, 1, 1, 1, time.Now().Location()).Format(opencell_api.TIME_FORMAT),0)
 	}
 	sub, _ := db.Subscribe(common.CHANNEL_CONF_DROPPED)
 	for {
@@ -95,20 +94,19 @@ func (l BillingListener) ParseCallerList(v *redis.Message) {
 			callerList.Callers = append(callerList.Callers, caller)
 		}
 	}
-	layout := "2006-01-02T15:04:05.000Z"
 	last_time_str, err := db.Get("last_conf_time").Result()
 	var lastConfTime time.Time
 	if err != nil {
 		lastConfTime = time.Date(1970, 1, 1, 1, 1, 1, 1, time.Now().Location())
 	} else {
-		lastConfTime, _ = time.Parse(layout, last_time_str)
+		lastConfTime, _ = time.Parse(opencell_api.TIME_FORMAT, last_time_str)
 	}
 
 	currentTime := time.Now()
 	callerList.Sum = opencellApi.GetBalanceWithRange(opencellUser, lastConfTime, currentTime)
 	jsonStr, _ := json.Marshal(callerList)
 	db.Set(JSON_STATS_KEY, jsonStr,0)
-	db.Set("last_conf_time", time.Now().Format(layout),0)
+	db.Set("last_conf_time", time.Now().Format(opencell_api.TIME_FORMAT),0)
 }
 
 func (l BillingListener) DoMessage(v *redis.Message) {

@@ -30,9 +30,8 @@ type ResponseBalance struct {
 } 
 
 func (this Wallet) GetOpenBalanceTimeRange(clientID string, from time.Time, to time.Time) (bool, float64) {
-	layout := "2006-01-02T15:04:05.000Z"
-	from_str := from.Format(layout)
-	to_str := to.Format(layout)
+	from_str := from.Format(TIME_FORMAT)
+	to_str := to.Format(TIME_FORMAT)
 	httpUtils := NewHttpUtils(this.basicAuthString)
 	ioUtils := new (IOUtils)
 
