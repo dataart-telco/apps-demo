@@ -7,13 +7,19 @@ import (
     "strconv"
 )
 
+const (
+	WALLET_URL = "/meveo/api/rest/billing/wallet/balance/open"
+)
+
 type Wallet struct {
-	BasicAuthString string
-	WalletUrl string
+	basicAuthString string
+	serverUrl string
 }
 
-func NewWallet(basicAuthStr string, walletUrl string) Wallet {
-	return Wallet{ BasicAuthString: basicAuthStr, WalletUrl: walletUrl }
+func NewWallet(basicAuthStr string, srvUrl string) Wallet {
+	return Wallet { 
+		basicAuthString: basicAuthStr, 
+		serverUrl: srvUrl }
 }
 
 type ResponseBalance struct {
@@ -22,17 +28,20 @@ type ResponseBalance struct {
 	Message string    `json:"message"`
 } 
 
-func (this Wallet) GetOpenBalance(xmlPath string, clientID string) (bool, float64) {
+func (this Wallet) GetOpenBalance(clientID string) (bool, float64) {
 	
-	httpUtils := NewHttpUtils(this.BasicAuthString)
+	httpUtils := NewHttpUtils(this.basicAuthString)
+	ioUtils := new (IOUtils)
 	
-	rawJSON, err := ioutil.ReadFile(xmlPath)
-    check(err)
+	xmlPath := "xml/open_balance.xml"
+	rawJSON := ioUtils.GetFileData(ioUtils.GetAbsolutePath(xmlPath))
+
 	 
 	openBalanceJSON := fmt.Sprintf(string(rawJSON), clientID)
 	fmt.Println(openBalanceJSON);
 	
-	status, err, resp := httpUtils.DoPostJson(this.WalletUrl, openBalanceJSON)
+	url := this.serverUrl + WALLET_URL
+	status, err, resp := httpUtils.DoPostJson(url, openBalanceJSON)
 	if err != nil && status == 0 {
 		fmt.Println("Payemnt.ChargeClient: post error - ", err)
 		return false, -1

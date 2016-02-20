@@ -10,9 +10,13 @@ import (
     //"errors"
 )
 
+const (
+	//ACCOUNT_URL = "/meveo/AccountWs"
+)
+
 type Customer struct {
 	BasicAuthString string
-	AccountUrl string
+	ServerUrl string
 }
 
 func check(e error) {
@@ -21,26 +25,29 @@ func check(e error) {
     }
 }
 
-func NewCustomer(basicAuthStr string, accountUrl string) Customer {
-	return Customer{ BasicAuthString: basicAuthStr, AccountUrl: accountUrl }
+func NewCustomer(basicAuthStr string, serverUrl string) Customer {
+	return Customer{ BasicAuthString: basicAuthStr, ServerUrl: serverUrl }
 }
 
-func (this Customer) CreateCustomerHierarchy(xmlPath string, clientID string, firstName string, lastName string) bool {
+func (this Customer) CreateCustomerHierarchy(clientID string) bool {
 	
-	rawXml, err := ioutil.ReadFile(xmlPath)
+	ioUtils := new (IOUtils)
+	
+	xmlPath := "xml/customer_hierarchy.xml"
+	rawXml, err := ioutil.ReadFile(ioUtils.GetAbsolutePath(xmlPath))
     check(err)
 	 
-	customerCreationXml := fmt.Sprintf(string(rawXml), clientID, firstName, lastName, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID)
+	customerCreationXml := fmt.Sprintf(string(rawXml), clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID)
 	fmt.Println(customerCreationXml);
 	
 	return this.doPostToAccount(customerCreationXml)
-	
 }
 
 func (this Customer) doPostToAccount(xmlData string) bool {
 	
+	url := this.ServerUrl + ACCOUNT_URL
 	httpUtils := NewHttpUtils(this.BasicAuthString)
-	status, err, _ := httpUtils.DoPostSoap(this.AccountUrl, xmlData)
+	status, err, _ := httpUtils.DoPostSoap(url, xmlData)
 	if err != nil && status == 0 {
 		fmt.Println(err)
 		return false

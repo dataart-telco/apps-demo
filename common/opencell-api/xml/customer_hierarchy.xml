@@ -12,8 +12,8 @@
                         <!--Optional:-->
                         <name>
                            <!--Optional:-->
-                           <firstName>%s</firstName>
-                           <lastName>%s</lastName>
+                           <firstName>first_name</firstName>
+                           <lastName>last_name</lastName>
                         </name>
                         <customerCategory>CLIENT</customerCategory>
                         <customerBrand>TELCO</customerBrand>
