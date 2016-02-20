@@ -12,6 +12,7 @@ type OpencellAPI struct {
 }
 
 func NewOpencellAPI(basicAuthStr string, srvUrl string) OpencellAPI {
+	srvUrl = "http://" + srvUrl
 	return OpencellAPI {
 		catalog: NewCatalog(basicAuthStr, srvUrl),
 		customer: NewCustomer(basicAuthStr, srvUrl),
