@@ -25,18 +25,6 @@ func NewCatalog(basicAuthStr string, serverUrl string) Catalog {
 		httpUtils: NewHttpUtils(basicAuthStr) }
 }
 
-/*
-func (this Catalog) CreateInvoice(xmlPath) bool {
-	
-	rawXml, err := ioutil.ReadFile(xmlPath)
-    check(err)
-	
-	if !catalog.DoPostToSettings(rawXml) {
-		fmt.Println("cannot create invoice category")
-		return false
-	}
-}*/
-
 func (this Catalog) doPostToSettings(rawXml []byte) bool {
 
 	url := this.ServerUrl + SETTINGS_URL
