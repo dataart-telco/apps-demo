@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	opencellUser = "DA conference"
+	opencellUser = "DataArt Conference"
 )
 var cfg = common.NewConfig()
 var db = common.NewDbClient(cfg.Service.Redis)
