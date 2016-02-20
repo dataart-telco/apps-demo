@@ -1,0 +1,18 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PRICE_PLAN_VOICE" description="Price Plan telco B2C voice">
+            <eventCode>CH_VOICE_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OFFER_VOICE</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>0.1</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>0.1</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>

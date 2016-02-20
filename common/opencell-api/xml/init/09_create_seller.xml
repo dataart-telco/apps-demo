@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createSeller>
+         <seller code="TELCO" description="TELCO description">
+ 
+         </seller>
+      </ws:createSeller>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:chargeCdr>
+         <!--Optional:-->
+         <cdr>%s;%s;%s_AP;VOICE</cdr>
+      </ws:chargeCdr>
+   </soapenv:Body>
+</soapenv:Envelope>

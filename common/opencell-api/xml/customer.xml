@@ -1,0 +1,22 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="%s" description="customer description">
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <firstName>%s</firstName>
+               <lastName>%s</lastName>
+            </name>
+            <loaded>true</loaded>
+            <customerCategory>%s</customerCategory>
+            <customerBrand>%s</customerBrand>
+            <seller>%s</seller>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+

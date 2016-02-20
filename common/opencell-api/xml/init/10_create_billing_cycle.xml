@@ -1,0 +1,13 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingCycle>
+         <!--Optional:-->
+         <billingCycle code="BILLCYCLE1" description="billing cycle description">
+             <invoiceDateDelay>1</invoiceDateDelay>
+            <dueDateDelay>1</dueDateDelay>            
+            <calendar>MONTHLY</calendar>            
+         </billingCycle>
+      </ws:createBillingCycle>
+   </soapenv:Body>
+</soapenv:Envelope>

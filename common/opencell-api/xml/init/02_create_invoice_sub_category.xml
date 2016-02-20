@@ -1,0 +1,18 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceSubCategory>
+         <!--Optional:-->
+         <invoiceSubCategory code="VOICE_USAGE" description="Voice Usage">
+            <invoiceCategory>USAGE</invoiceCategory>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>ENG</languageCode>
+               <!--Optional:-->
+               <description>Voice Usage</description>
+            </languageDescriptions>
+         </invoiceSubCategory>
+      </ws:createInvoiceSubCategory>
+   </soapenv:Body>
+</soapenv:Envelope>

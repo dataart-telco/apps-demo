@@ -1,0 +1,78 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <seller code="TELCO" description="TELCO">
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="%s" description="cust">
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <firstName>%s</firstName>
+                           <lastName>%s</lastName>
+                        </name>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>TELCO</customerBrand>
+                        <seller>TELCO</seller>
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="%s_CA" description="Payer">
+                              <customer>%s</customer>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="%s_BA" description="POSTPAID PARENTS">
+                                    <customerAccount>%s_CA</customerAccount>
+                                    <billingCycle>BILLCYCLE1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="%s_UA" description="Family">
+                                          <billingAccount>%s_BA</billingAccount>
+                                          <!--Optional:-->
+                                          <subscriptionDate>2015-07-01</subscriptionDate>
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="%s_SUBSCR" description="parents">
+                                                <userAccount>%s_UA</userAccount>
+                                                <offerTemplate>OFFER_VOICE</offerTemplate>
+                                                <subscriptionDate>2015-07-01</subscriptionDate>
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="%s_AP">
+                                                      <subscription>%s_SUBSCR</subscription>
+                                                   </access>                                                   
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->                                                   
+                                                   <serviceInstance code="SERVICE_VOICE" description="service description">
+                                                      <!--Optional:-->
+                                                      <subscriptionDate>2015-07-01</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>                                       
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>

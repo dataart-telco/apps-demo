@@ -1,0 +1,13 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceSubCategoryCountry>
+         <!--Optional:-->
+         <invoiceSubCategoryCountry>
+            <invoiceSubCategory>VOICE_USAGE</invoiceSubCategory>
+            <country>US</country>
+            <tax>TAX_00</tax>
+         </invoiceSubCategoryCountry>
+      </ws:createInvoiceSubCategoryCountry>
+   </soapenv:Body>
+</soapenv:Envelope>

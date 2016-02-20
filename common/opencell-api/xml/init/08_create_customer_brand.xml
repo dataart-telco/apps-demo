@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerBrand>
+         <!--Optional:-->
+         <customerBrand>
+            <!--Optional:-->
+            <code>TELCO</code>
+            <!--Optional:-->
+            <description>TELCO description</description>
+         </customerBrand>
+      </ws:createCustomerBrand>
+   </soapenv:Body>
+</soapenv:Envelope>

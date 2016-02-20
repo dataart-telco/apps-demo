@@ -1,0 +1,17 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceCategory>
+         <!--Optional:-->
+         <invoiceCategory code="USAGE" description="USAGE">
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>ENG</languageCode>
+               <!--Optional:-->
+               <description>USAGE</description>
+            </languageDescriptions>
+         </invoiceCategory>
+      </ws:createInvoiceCategory>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,34 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUsageChargeTemplate>
+         <!--Optional:-->
+         <usageChargeTemplate code="CH_VOICE_USAGE" description="Charge voice usage">
+            <invoiceSubCategory>VOICE_USAGE</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>true</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>ENG</languageCode>
+               <!--Optional:-->
+               <description>Voice Usage</description>
+            </languageDescriptions>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <!--Optional:-->
+            <inputUnitDescription>Seconds</inputUnitDescription>
+            <!--Optional:-->
+
+            <unitNbDecimal>2</unitNbDecimal>
+            
+            <!--Optional:-->
+            <filterParam1>VOICE</filterParam1>
+            <!--Optional:-->
+            <filterExpression></filterExpression>
+            <priority>99</priority>
+         </usageChargeTemplate>
+      </ws:createUsageChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>
