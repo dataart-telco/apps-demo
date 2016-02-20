@@ -78,14 +78,14 @@ func (l BillingListener) SubscribeCallerList() {
 }
 
 func (l BillingListener) ParseCallerList(v *redis.Message) {
-	cList := make([]String, 0)
+	cList := make([]string, 0)
 	json.Unmarshal([]byte(v.Payload), &cList)
 	callerList := ConfStats{}
 	total := 0
 	for _, element := range cList {
 		callInfo, err := restcommApi.GetCallInfo(element)
 		if err != nil {
-			common.Error.Println("opencell-billing: Failed to query restcomm for call sid:%s", callStatus.CallSid)
+			common.Error.Println("opencell-billing: Failed to query restcomm for call sid:%s", element)
 		} else {
 			duration := callInfo.Duration
 			total += duration
@@ -95,7 +95,7 @@ func (l BillingListener) ParseCallerList(v *redis.Message) {
 	}
 	callerList.Sum = float64(total)
 	jsonStr, _ := json.Marshal(callerList)
-	db.Set(JSON_STATS_KEY, jsonStr)
+	db.Set(JSON_STATS_KEY, jsonStr,0)
 }
 
 func (l BillingListener) DoMessage(v *redis.Message) {

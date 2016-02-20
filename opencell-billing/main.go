@@ -8,9 +8,9 @@ import (
 
 func main() {
 	common.Info.Println("Opencell billing")
+	webserver := OpencellWebServer{}
+	webserver.Start()
 	callListener := BillingListener{}
 	callListener.Subscribe()
 	callListener.SubscribeCallerList()
-	webserver := OpencellWebServer{}
-	webserver.Start()
 }

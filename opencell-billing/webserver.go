@@ -3,12 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
-"tad-demo/common"
 	"time"
 )
-
-var cfg = common.NewConfig()
-var db = common.NewDbClient(cfg.Service.Redis)
 
 type OpencellWebServer struct {
 }
@@ -16,7 +12,7 @@ type OpencellWebServer struct {
 func (w OpencellWebServer) Start() {
 	go w.startWebServer()
 
-	url := fmt.Sprintf("http://%s/ping.xml", cfg.GetExternalAddress(cfg.ServerPort.Conference))
+	url := fmt.Sprintf("http://%s/ping.xml", cfg.GetExternalAddress(8080))
 	for i := 0; i < 15; i++ {
 		fmt.Println("Wait until server is ready...")
 		time.Sleep(1 * time.Second)
@@ -45,10 +41,5 @@ func (self OpencellWebServer) startWebServer() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func (self WebServer) handleCallStatusChanged(to string, callStatus string, callSid string) {
-	status := common.CallStatus{To: to, CallStatus: callStatus, CallSid: callSid}
-	db.Publish(common.CHANNEL_CALL_STATUS, status.ToJson())
 }
 
