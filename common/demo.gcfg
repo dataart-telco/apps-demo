@@ -21,6 +21,10 @@ didProvider=80.250.109.132
 phone = +5555
 conference = 9999
 sms = 9999
+[Opencell]
+host = 127.0.0.1:8080
+user = meveo.admin
+password = meveo.admin
 [Messages]
 dialFrom=DataArt Conference
 conferenceWelcome=Welcome to the conference
