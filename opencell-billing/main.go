@@ -11,6 +11,11 @@ func main() {
 	webserver := OpencellWebServer{}
 	webserver.Start()
 	callListener := BillingListener{}
-	callListener.Subscribe()
-	callListener.SubscribeCallerList()
+	go func() {
+		callListener.Subscribe()
+	}()
+	go func() {
+		callListener.SubscribeCallerList()
+	}()
+	for {}
 }

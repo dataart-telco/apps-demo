@@ -1,10 +1,11 @@
 package opencell_api
 
 import (
-    "io/ioutil"
-    "fmt"
-    "encoding/json"
-    "strconv"
+    	"io/ioutil"
+    	"fmt"
+    	"encoding/json"
+    	"strconv"
+	"time"
 )
 
 const (
@@ -28,6 +29,35 @@ type ResponseBalance struct {
 	Message string    `json:"message"`
 } 
 
+func (this Wallet) GetOpenBalanceTimeRange(clientID string, from time.Time, to time.Time) (bool, float64) {
+	layout := "2006-01-02T15:04:05.000Z"
+	from_str := from.Format(layout)
+	to_str := to.Format(layout)
+	httpUtils := NewHttpUtils(this.basicAuthString)
+	ioUtils := new (IOUtils)
+
+	xmlPath := "xml/open_balance_w_time.xml"
+	rawJSON := ioUtils.GetFileData(ioUtils.GetAbsolutePath(xmlPath))
+
+
+	openBalanceJSON := fmt.Sprintf(string(rawJSON), clientID, from_str, to_str)
+
+	url := this.serverUrl + WALLET_URL
+	status, err, resp := httpUtils.DoPostJson(url, openBalanceJSON)
+	if err != nil && status == 0 {
+		fmt.Println("Payemnt.ChargeClient: post error - ", err)
+		return false, -1
+	}
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("%s", err)
+		return false, -1
+	}
+	balance := this.parseResponse(respBody)
+
+	return true, balance
+}
 func (this Wallet) GetOpenBalance(clientID string) (bool, float64) {
 	
 	httpUtils := NewHttpUtils(this.basicAuthString)
