@@ -38,7 +38,7 @@ func (this Customer) CreateCustomerHierarchy(clientID string) bool {
     check(err)
 	 
 	customerCreationXml := fmt.Sprintf(string(rawXml), clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID, clientID)
-	fmt.Println(customerCreationXml);
+	//fmt.Println(customerCreationXml);
 	
 	return this.doPostToAccount(customerCreationXml)
 }

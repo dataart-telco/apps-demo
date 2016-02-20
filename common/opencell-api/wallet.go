@@ -38,7 +38,7 @@ func (this Wallet) GetOpenBalance(clientID string) (bool, float64) {
 
 	 
 	openBalanceJSON := fmt.Sprintf(string(rawJSON), clientID)
-	fmt.Println(openBalanceJSON);
+	//fmt.Println(openBalanceJSON);
 	
 	url := this.serverUrl + WALLET_URL
 	status, err, resp := httpUtils.DoPostJson(url, openBalanceJSON)
@@ -60,8 +60,8 @@ func (this Wallet) GetOpenBalance(clientID string) (bool, float64) {
 
 func (this Wallet) parseResponse(respBody []byte) float64 {
 	
-	fmt.Println("Response: \n")
-	fmt.Println(string(respBody))
+	//fmt.Println("Response: \n")
+	//fmt.Println(string(respBody))
 
 	var respBalance ResponseBalance
 	err := json.Unmarshal(respBody, &respBalance)
@@ -70,7 +70,7 @@ func (this Wallet) parseResponse(respBody []byte) float64 {
 		return -1.0;
 	}
 	
-	fmt.Println(respBalance)
+	//fmt.Println(respBalance)
 
 	if  respBalance.ErrorCode != 0 {
 		fmt.Printf("Cannot get custoner balance. Error code = %i", respBalance.ErrorCode)

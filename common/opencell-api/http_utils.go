@@ -33,8 +33,8 @@ func (this HttpUtils) DoPostSoap(url string, xml string) (int, error, *http.Resp
 		return 0, err, nil
 	}
 	
-	respBody, err := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(respBody))
+	_ , err = ioutil.ReadAll(resp.Body)
+	//fmt.Println(string(respBody))
 	
 	if err != nil {
 		fmt.Println(err)

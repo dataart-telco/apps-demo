@@ -29,7 +29,7 @@ func (this Payment) ChargeCustomer(clientID string, time string, minutes float64
     check(err)
 	 
 	chargeXml := fmt.Sprintf(string(rawXml), time, strconv.FormatFloat(minutes, 'f', 6, 64), clientID)
-	fmt.Println(chargeXml)
+	//fmt.Println(chargeXml)
 	
 	return this.doPostToMediation(chargeXml)
 }
