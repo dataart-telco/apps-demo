@@ -3,6 +3,7 @@ package main
 import (
 	"gopkg.in/redis.v3"
 	"tad-demo/common"
+	"tad-demo/common/opencell-api"
 )
 var cfg = common.NewConfig()
 var db = common.NewDbClient(cfg.Service.Redis)
@@ -23,13 +24,15 @@ func (l BillingListener) Subscribe() {
 			}
 			switch v := msg.(type) {
 			case *redis.Message:
-				callStatus := common.NewCallStatus(msg)
-				callInfo, err := restcommApi.GetCallInfo(msg.CallSid)
-				if err != nil {
-					common.Error.Println("opencell-billing: Failed to query restcomm for call sid:%s", msg.CallSid)
-				} else {
-					//opencell goes here
+				callStatus := common.NewCallStatus(v.Payload)
+				if callStatus.CallStatus == common.CallStatusCompleted {
+					callInfo, err := restcommApi.GetCallInfo(callStatus.CallSid)
+					if err != nil {
+						common.Error.Println("opencell-billing: Failed to query restcomm for call sid:%s", callStatus.CallSid)
+					} else {
+						//opencell goes here
 
+					}
 				}
 			}
 		}

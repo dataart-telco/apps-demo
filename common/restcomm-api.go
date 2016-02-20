@@ -188,7 +188,6 @@ func (api RestcommApi) MakeCall(from string, to string, callback string, statusC
 }
 
 func (api RestcommApi) GetCallInfo(sid string) (*CallInfo, error) {
-	Trace.Println("\tapi.MakeCall: from =", from, " to =", to, " callback =", callback)
 	acc := api.User + ":" + api.Pass
 	path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/Calls/%s.json", acc, api.Server, api.User, sid)
 	resp, err := http.Get(path)

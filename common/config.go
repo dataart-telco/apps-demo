@@ -64,8 +64,8 @@ type Config struct {
 	}
 
 	Opencell struct {
-		Host string,
-		User string,
+		Host string
+		User string
 		Password string
 	}
 }
