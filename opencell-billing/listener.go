@@ -12,8 +12,6 @@ type BillingListener struct {
 }
 
 func (l BillingListener) Subscribe() {
-	l.subscription = Subscription{acceptedQueue: make(chan string, 100)}
-
 	//subscribe for events from call_status queue
 	go func() {
 		sub, _ := db.Subscribe(common.CHANNEL_CALL_STATUS)
@@ -38,6 +36,17 @@ func (l BillingListener) Subscribe() {
 	}()
 	go func() {
 		sub, _ := db.Subscribe(common.CHANNEL_CONF_DROPPED)
+		for {
+			msg, e2 := sub.Receive()
+			if e2 != nil {
+				common.Error.Println("opencell-billing: Error receiving message from Redis 'call dropped' queue")
+				panic(e2)
+			}
+			switch v := msg.(type) {
+			case *redis.Message:
+				//do somethin on call drop
+			}
+		}
 	}()
 }
 
