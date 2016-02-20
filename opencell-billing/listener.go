@@ -61,7 +61,7 @@ func (l BillingListener) SubscribeCallerList() {
 	_, err := db.Get("last_conf_time").Result()
 	if err != nil {
 		layout := "2006-01-02T15:04:05.000Z"
-		db.Set("last_conf_time", time.Now().Format(layout),0)
+		db.Set("last_conf_time", time.Date(1970, 1, 1, 1, 1, 1, 1, time.Now().Location()).Format(layout),0)
 	}
 	sub, _ := db.Subscribe(common.CHANNEL_CONF_DROPPED)
 	for {
