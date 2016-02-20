@@ -10,4 +10,7 @@ func main() {
 	common.Info.Println("Opencell billing")
 	callListener := BillingListener{}
 	callListener.Subscribe()
+	callListener.SubscribeCallerList()
+	webserver := OpencellWebServer{}
+	webserver.Start()
 }
