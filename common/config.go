@@ -62,6 +62,12 @@ type Config struct {
 	Sip struct {
 		DidProvider string
 	}
+
+	Opencell struct {
+		Host string,
+		User string,
+		Password string
+	}
 }
 
 func NewConfig() (cfg Config) {
@@ -81,6 +87,10 @@ func NewConfig() (cfg Config) {
 	flag.StringVar(&cfg.Callback.Conference, "r-phone-conf", cfg.Callback.Conference, "Conference phone number")
 	flag.StringVar(&cfg.Callback.Sms, "r-phone-sms", cfg.Callback.Sms, "Sms phone number")
 	flag.StringVar(&cfg.Sip.DidProvider, "dp", cfg.Sip.DidProvider, "Did provider sip domain")
+
+	flag.StringVar(&cfg.Opencell.Host, "oc-host", cfg.Opencell.Host, "Opencall host")
+	flag.StringVar(&cfg.Opencell.User, "oc-user", cfg.Opencell.User, "Opencell user")
+	flag.StringVar(&cfg.Opencell.Password, "oc-pass", cfg.Opencell.Password, "Open cell password")
 
 	l := flag.String("l", "INFO", "Log level: TRACE, INFO")
 
