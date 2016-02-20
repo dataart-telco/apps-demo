@@ -56,4 +56,3 @@ func (l BillingListener) Subscribe() {
 		}
 	}()
 }
-
