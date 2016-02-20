@@ -19,8 +19,8 @@ var restcommApi = common.NewRestcommApi(cfg.Service.Restcomm, cfg.Auth.User, cfg
 var opencellApi = opencell_api.NewOpencellAPI(cfg.Opencell.Password, cfg.Opencell.Host)
 
 type Caller struct {
-	Sid string
-	Time int
+	Sid string `json:"sid"`
+	Time int `json:"duration"`
 }
 func NewCaller(sid string, time int) Caller {
 	return Caller {
@@ -28,8 +28,8 @@ func NewCaller(sid string, time int) Caller {
 		Time : time}
 }
 type ConfStats struct {
-	Sum float64
-	Callers []Caller
+	Sum float64 `json:"sum"`
+	Callers []Caller `json:"callers"`
 }
 
 type BillingListener struct {
@@ -58,10 +58,10 @@ func (l BillingListener) Subscribe() {
 
 func (l BillingListener) SubscribeCallerList() {
 	//subscribe for events from call_status queue
-	last_time := db.Get("last_conf_time").String()
-	if last_time == "" {
+	_, err := db.Get("last_conf_time").Result()
+	if err != nil {
 		layout := "2006-01-02T15:04:05.000Z"
-		db.Set("last_conf_time", time.Now().Format(layout))
+		db.Set("last_conf_time", time.Now().Format(layout),0)
 	}
 	sub, _ := db.Subscribe(common.CHANNEL_CONF_DROPPED)
 	for {
@@ -95,14 +95,20 @@ func (l BillingListener) ParseCallerList(v *redis.Message) {
 			callerList.Callers = append(callerList.Callers, caller)
 		}
 	}
-	last_time_str := db.Get("last_conf_time").String()
 	layout := "2006-01-02T15:04:05.000Z"
-	lastConfTime, err := time.Parse(layout, last_time_str)
+	last_time_str, err := db.Get("last_conf_time").Result()
+	var lastConfTime time.Time
+	if err != nil {
+		lastConfTime = time.Date(1970, 1, 1, 1, 1, 1, 1, time.Now().Location())
+	} else {
+		lastConfTime, _ = time.Parse(layout, last_time_str)
+	}
+
 	currentTime := time.Now()
 	callerList.Sum = opencellApi.GetBalanceWithRange(opencellUser, lastConfTime, currentTime)
 	jsonStr, _ := json.Marshal(callerList)
 	db.Set(JSON_STATS_KEY, jsonStr,0)
-	db.Set("last_conf_time", time.Now().Format(layout))
+	db.Set("last_conf_time", time.Now().Format(layout),0)
 }
 
 func (l BillingListener) DoMessage(v *redis.Message) {

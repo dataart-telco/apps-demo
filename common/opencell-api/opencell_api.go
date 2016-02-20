@@ -2,6 +2,7 @@ package opencell_api
 
 import (
 	"fmt"
+	"time"
 )
 
 type OpencellAPI struct {
@@ -92,7 +93,7 @@ func (this OpencellAPI) GetBalance(clientID string) float64 {
 	return -1.0
 }
 
-func (this OpencellAPI) GetBalanceWithRange(clientID string, from Time, to Time) float64 {
+func (this OpencellAPI) GetBalanceWithRange(clientID string, from time.Time, to time.Time) float64 {
 	result, balance := this.wallet.GetOpenBalanceTimeRange(clientID, from, to)
 	if result {
 		fmt.Printf("OK : customer balance is %f \n", balance)
