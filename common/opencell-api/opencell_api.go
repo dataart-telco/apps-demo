@@ -73,7 +73,7 @@ func (this OpencellAPI) CreateNewCustomer(clientID string) bool {
 	return false
 }
 
-func (this OpencellAPI) ChargeCustomer(clientID string, time string, minutes int) bool {
+func (this OpencellAPI) ChargeCustomer(clientID string, time string, minutes float64) bool {
 	if this.payment.ChargeCustomer(clientID, time, minutes) {
 		fmt.Printf("OK : customer with id %s was charged with minutes = %d \n", clientID, minutes)
 		return true

@@ -21,14 +21,14 @@ func NewPayment(basicAuthStr string, srvUrl string) Payment {
 		serverUrl: srvUrl }
 }
 
-func (this Payment) ChargeCustomer(clientID string, time string, minutes int) bool {
+func (this Payment) ChargeCustomer(clientID string, time string, minutes float64) bool {
 	
 	ioUtils := new (IOUtils)
 	xmlPath := "xml/charge.xml"
 	rawXml, err := ioutil.ReadFile(ioUtils.GetAbsolutePath(xmlPath))
     check(err)
 	 
-	chargeXml := fmt.Sprintf(string(rawXml), time, strconv.Itoa(minutes), clientID)
+	chargeXml := fmt.Sprintf(string(rawXml), time, strconv.FormatFloat(minutes, 'f', 6, 64), clientID)
 	fmt.Println(chargeXml)
 	
 	return this.doPostToMediation(chargeXml)

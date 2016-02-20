@@ -57,7 +57,7 @@ func (l BillingListener) DoMessage(v *redis.Message) {
 				timestamp.Hour(),
 				timestamp.Minute(),
 				timestamp.Second())
-			opencellApi.ChargeCustomer(opencellUser, timestring, duration/60 )
+			opencellApi.ChargeCustomer(opencellUser, timestring, float64(duration)/60.0 )
 		}
 	}
 }
