@@ -20,12 +20,14 @@ var opencellApi = opencell_api.NewOpencellAPI(cfg.Opencell.Password, cfg.Opencel
 
 type Caller struct {
 	Sid string `json:"sid"`
-	Time int `json:"duration"`
+	Time float64 `json:"duration"`
+	PhoneNumber string `json:"to"` 
 }
-func NewCaller(sid string, time int) Caller {
+func NewCaller(sid string, time float64, phoneNumber string) Caller {
 	return Caller {
 		Sid : sid,
-		Time : time}
+		Time : time,
+		PhoneNumber: phoneNumber}
 }
 type ConfStats struct {
 	Sum float64 `json:"sum"`
@@ -82,7 +84,7 @@ func (l BillingListener) ParseCallerList(v *redis.Message) {
 	cList := make([]string, 0)
 	json.Unmarshal([]byte(v.Payload), &cList)
 	callerList := ConfStats{}
-	total := 0
+	total := 0.0
 	for _, element := range cList {
 		callInfo, err := restcommApi.GetCallInfo(element)
 		if err != nil {
@@ -90,7 +92,11 @@ func (l BillingListener) ParseCallerList(v *redis.Message) {
 		} else {
 			duration := callInfo.Duration
 			total += duration
-			caller := NewCaller(element, duration)
+			phoneNumber, err := restcommApi.GetTo(element)
+			if err != nil {
+				common.Error.Println("opencell-billing: Failed to query restcomm for phone number. Sid: %s", element)
+			}
+			caller := NewCaller(element, duration, phoneNumber)
 			callerList.Callers = append(callerList.Callers, caller)
 		}
 	}
@@ -110,6 +116,8 @@ func (l BillingListener) ParseCallerList(v *redis.Message) {
 }
 
 func (l BillingListener) DoMessage(v *redis.Message) {
+	fmt.Printf("BillingListener.DoMessage \n")
+	
 	callStatus := common.NewCallStatus(v.Payload)
 	if callStatus.CallStatus == common.CallStatusCompleted {
 		callInfo, err := restcommApi.GetCallInfo(callStatus.CallSid)

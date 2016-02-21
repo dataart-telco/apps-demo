@@ -24,7 +24,7 @@ const (
 type CallInfo struct {
 	Sid string `json:"sid"`
 	Status string `json:"status"`
-	Duration int `json:"duration"`
+	Duration float64 `json:"duration"`
 	Uri string `json:"uri"`
 }
 
@@ -188,6 +188,7 @@ func (api RestcommApi) MakeCall(from string, to string, callback string, statusC
 }
 
 func (api RestcommApi) GetCallInfo(sid string) (*CallInfo, error) {
+
 	acc := api.User + ":" + api.Pass
 	path := fmt.Sprintf("http://%s@%s/restcomm/2012-04-24/Accounts/%s/Calls/%s.json", acc, api.Server, api.User, sid)
 	resp, err := http.Get(path)
@@ -203,7 +204,7 @@ func (api RestcommApi) GetCallInfo(sid string) (*CallInfo, error) {
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-
+	
 	var call CallInfo
 	json.Unmarshal(body, &call)
 
@@ -227,7 +228,7 @@ func (api RestcommApi) GetTo(sid string) (string, error) {
 	call := make(map[string]interface{})
 	json.Unmarshal(body, &call)
 
-	return call["To"].(string), nil
+	return call["to"].(string), nil
 }
 
 // will overrid StatusCallback and Url fields of call, please use it for inprogress calls only
