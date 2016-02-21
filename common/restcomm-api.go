@@ -271,6 +271,10 @@ func GetClientName(client string) string {
 
 var digistRegExp = regexp.MustCompile("[0-9]+")
 
+func IsPhoneNumber(from string) bool {
+	return digistRegExp.MatchString(from)
+}
+
 func ConvertToSipCall(from string, didProvider string) string {
 	if digistRegExp.MatchString(from) {
 		return "sip:" + from + "@" + didProvider

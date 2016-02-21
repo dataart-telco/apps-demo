@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+	"time"
 	"bytes"
 	"crypto/md5"
 	"fmt"
@@ -49,20 +51,28 @@ func (sms Sms) Subscribe() Subscription {
 func (sms Sms) handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/xml")
 
+	var from string
+
 	if r.URL.Path == "/test.xml" {
 		var buffer bytes.Buffer
+		t := time.Now()
+		buffer.WriteString(t.Format("20060102150405"))
 		for i := 0; i < 100; i++ {
 			buffer.WriteString("long text here")
 		}
 		fmt.Fprintf(w, "<Test>%x</Test>", md5.Sum(buffer.Bytes()))
 		buffer.Reset()
 		return
+	} else if r.URL.Path == "/sms.json" {
+		// receive from SMS api
+		from = r.PostFormValue("from")
+	} else {
+		from = r.PostFormValue("From")
 	}
 	fmt.Fprintf(w, "<Response><Hangup/></Response>")
 
-	from := r.PostFormValue("From")
-
-	common.Trace.Println("\tReceive ", r.Method, " call from ", from)
+	common.Info.Println("\tReceive ", r.URL.Path, " call from ", from)
+	from = strings.TrimSpace(from)
 	if from != "" {
 		sms.subscription.acceptedQueue <- from
 	}

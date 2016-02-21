@@ -12,12 +12,12 @@ import (
 var cfg = common.NewConfig()
 var db = common.NewDbClient(cfg.Service.Redis)
 var restcommApi = common.NewRestcommApi(cfg.Service.Restcomm, cfg.Auth.User, cfg.Auth.Pass)
-
+var truPhone = common.Truphone{}
 type SmsService struct {
 }
 
 func (s SmsService) SendSms(to string) {
-	common.Trace.Println("Send sms to", to)
+	common.Info.Println("Send sms to", to)
 
 	to = common.ConvertToSipSms(to, cfg.Sip.DidProvider)
 
@@ -32,9 +32,18 @@ func (s SmsService) SendSms(to string) {
 		}
 	}
 	common.Trace.Println("Sms message:", sms)
-	err := restcommApi.SendSms(to, "DataArt", sms)
-	if err != nil {
-		common.Error.Println("Send sms error", err)
+
+	if common.IsPhoneNumber(to) {
+		common.Info.Println("use truPhone", to)
+		err := truPhone.SendSms(to, "DataArt", sms)
+		if err != nil {
+			common.Error.Println("Send sms to truphone error", err)
+		}
+	} else {
+		err := restcommApi.SendSms(to, "DataArt", sms)
+		if err != nil {
+			common.Error.Println("Send sms to restcomm error", err)
+		}
 	}
 }
 
