@@ -17,5 +17,5 @@ func main() {
 	go func() {
 		callListener.SubscribeCallerList()
 	}()
-	for {}
+	common.WaitCtrlC()
 }
